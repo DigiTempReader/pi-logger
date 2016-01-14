@@ -1,0 +1,6 @@
+[Unit]
+Description=pi-logger graph creator
+
+[Service]
+Type=simple
+ExecStart=/home/masneyb/data/pi-logger/bin/create-graphs.sh

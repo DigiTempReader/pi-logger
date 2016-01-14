@@ -1,0 +1,8 @@
+[Unit]
+Description=pi-logger data gatherer timer
+
+[Timer]
+OnUnitActiveSec=300s
+
+[Install]
+WantedBy=multi-user.target

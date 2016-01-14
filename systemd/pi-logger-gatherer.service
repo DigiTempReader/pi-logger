@@ -1,0 +1,6 @@
+[Unit]
+Description=pi-logger data gatherer
+
+[Service]
+Type=simple
+ExecStart=/home/masneyb/data/pi-logger/bin/gather-data.sh

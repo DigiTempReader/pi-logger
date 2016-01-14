@@ -1,0 +1,8 @@
+[Unit]
+Description=pi-logger graph creator timer
+
+[Timer]
+OnUnitActiveSec=6h
+
+[Install]
+WantedBy=multi-user.target
