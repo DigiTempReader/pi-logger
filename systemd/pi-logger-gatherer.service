@@ -2,5 +2,6 @@
 Description=pi-logger data gatherer
 
 [Service]
+User=masneyb
 Type=simple
 ExecStart=/home/masneyb/data/pi-logger/bin/gather-data.sh

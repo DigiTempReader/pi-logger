@@ -2,5 +2,6 @@
 Description=pi-logger graph creator
 
 [Service]
+User=masneyb
 Type=simple
 ExecStart=/home/masneyb/data/pi-logger/bin/create-graphs.sh
