@@ -19,7 +19,7 @@ if [ ! -f "${RRDFILE}" ] ; then
 fi
 
 TMP=$(mktemp)
-dirname "$0"/humiture > "${TMP}"
+$(dirname "$0")/humiture > "${TMP}"
 HUMIDITY=$(grep Humidity "${TMP}" | awk '{print $2}')
 TEMPERATURE=$(grep Temperature "${TMP}" | awk '{print $2}')
 rm -f "${TMP}"
