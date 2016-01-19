@@ -1,5 +1,5 @@
 all:
-	gcc -o bin/humiture humiture.c -lwiringPi
+	gcc -Wall -ansi -pedantic -D_GNU_SOURCE -o bin/humiture humiture.c -lwiringPi
 
 clean:
 	rm -f bin/humiture

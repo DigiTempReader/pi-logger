@@ -23,19 +23,19 @@ int read_data()
 
 	memset(&data, 0, 5);
 
-	// pull pin down for 18 milliseconds
+	/* pull pin down for 18 milliseconds */
 	pinMode(DHTPIN, OUTPUT);
 	digitalWrite(DHTPIN, LOW);
 	delay(18);
 
-	// then pull it up for 40 microseconds
+	/* then pull it up for 40 microseconds */
 	digitalWrite(DHTPIN, HIGH);
 	delayMicroseconds(40); 
 
-	// prepare to read the pin
+	/* prepare to read the pin */
 	pinMode(DHTPIN, INPUT);
 
-	// detect change and read data
+	/* detect change and read data */
 	for (i=0; i < MAXTIMINGS; i++) {
 		counter = 0;
 		while (digitalRead(DHTPIN) == laststate) {
@@ -51,9 +51,9 @@ int read_data()
 			break;
 		}
 
-		// ignore first 3 transitions
+		/* ignore first 3 transitions */
 		if ((i >= 4) && (i%2 == 0)) {
-			// shove each bit into the storage bytes
+			/* shove each bit into the storage bytes */
 			data[j/8] <<= 1;
 			if (counter > 16) {
 				data[j/8] |= 1;
@@ -62,8 +62,8 @@ int read_data()
 		}
 	}
 
-	// check we read 40 bits (8bit x 5 ) + verify checksum in the last byte
-	// print it out if data is good
+	/* check we read 40 bits (8bit x 5 ) + verify checksum in the last byte
+	   print it out if data is good */
 	if ((j >= 40) && 
 			(data[4] == ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) ) {
 		float temperature, humidity;
@@ -75,7 +75,7 @@ int read_data()
 		}
 
 		if (humidity < 0.0 || humidity > 100.0 || temperature < -30.0 || temperature > 50.0) {
-			// Bad reading
+			/* Bad reading */
 			return 0;
 		}
 
@@ -84,7 +84,7 @@ int read_data()
 		return 1;
 	}
 
-	// Bad reading
+	/* Bad reading */
 	return 0;
 }
 
@@ -95,7 +95,7 @@ int main (void)
 	}
 
 	while (!read_data()) {
-		// NOOP
+		/* NOOP */
 	}
 
 	return (0);
