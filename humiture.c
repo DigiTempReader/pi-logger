@@ -21,7 +21,7 @@ int read_data()
 	uint8_t counter = 0;
 	uint8_t j = 0, i;
 
-	memset(&data, 0, 5);
+	memset(data, 0, sizeof(data));
 
 	/* pull pin down for 18 milliseconds */
 	pinMode(DHTPIN, OUTPUT);

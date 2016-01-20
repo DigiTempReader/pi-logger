@@ -2,7 +2,7 @@
 Description=pi-logger graph creator timer
 
 [Timer]
-OnUnitActiveSec=1h
+OnCalendar=hourly
 
 [Install]
 WantedBy=multi-user.target
