@@ -1,1 +1,7 @@
 bin/humiture
+rrd/basement.rrd
+web/basement_daily.png
+web/basement_hourly.png
+web/basement_monthly.png
+web/basement_weekly.png
+web/basement_yearly.png
