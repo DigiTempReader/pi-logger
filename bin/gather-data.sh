@@ -1,6 +1,18 @@
 #!/bin/bash
 
-RRDFILE=$(dirname "$0")/../rrd/basement.rrd
+set -e # Exit if any commands fail
+set -u # Warn about uninitialized variables
+
+GPIO_PIN=${1:-}
+
+if [ "${GPIO_PIN}" = "" ] ; then
+        echo "usage: $0 <GPIO pin #>" >&2
+	echo "Note: This is the GPIO pin number used by wiringPi"
+        exit 1
+fi
+
+
+RRDFILE=$(dirname "$0")/../rrd/humiture.rrd
 
 if [ ! -f "${RRDFILE}" ] ; then
 	rrdtool create "${RRDFILE}" --start N --step 300 \
@@ -19,7 +31,8 @@ if [ ! -f "${RRDFILE}" ] ; then
 fi
 
 TMP=$(mktemp)
-$(dirname "$0")/humiture > "${TMP}"
+BASEDIR=$(dirname "$0")
+"${BASEDIR}"/humiture "${GPIO_PIN}" > "${TMP}"
 HUMIDITY=$(grep Humidity "${TMP}" | awk '{print $2}')
 TEMPERATURE=$(grep Temperature "${TMP}" | awk '{print $2}')
 rm -f "${TMP}"

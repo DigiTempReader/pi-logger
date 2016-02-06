@@ -4,4 +4,4 @@ Description=pi-logger data gatherer
 [Service]
 User=root
 Type=simple
-ExecStart=/home/masneyb/data/pi-logger/bin/gather-data.sh
+ExecStart=/home/masneyb/data/pi-logger/bin/gather-data.sh 0

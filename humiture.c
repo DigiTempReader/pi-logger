@@ -9,13 +9,13 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <errno.h>
 
 #define MAXTIMINGS 85
-#define DHTPIN 0
 
 int data[5];
 
-int read_data()
+int read_data(int gpioPin)
 {
 	uint8_t laststate = HIGH;
 	uint8_t counter = 0;
@@ -24,28 +24,28 @@ int read_data()
 	memset(data, 0, sizeof(data));
 
 	/* pull pin down for 18 milliseconds */
-	pinMode(DHTPIN, OUTPUT);
-	digitalWrite(DHTPIN, LOW);
+	pinMode(gpioPin, OUTPUT);
+	digitalWrite(gpioPin, LOW);
 	delay(18);
 
 	/* then pull it up for 40 microseconds */
-	digitalWrite(DHTPIN, HIGH);
+	digitalWrite(gpioPin, HIGH);
 	delayMicroseconds(40); 
 
 	/* prepare to read the pin */
-	pinMode(DHTPIN, INPUT);
+	pinMode(gpioPin, INPUT);
 
 	/* detect change and read data */
 	for (i=0; i < MAXTIMINGS; i++) {
 		counter = 0;
-		while (digitalRead(DHTPIN) == laststate) {
+		while (digitalRead(gpioPin) == laststate) {
 			counter++;
 			delayMicroseconds(1);
 			if (counter == 255) {
 				break;
 			}
 		}
-		laststate = digitalRead(DHTPIN);
+		laststate = digitalRead(gpioPin);
 
 		if (counter == 255) {
 			break;
@@ -88,13 +88,30 @@ int read_data()
 	return 0;
 }
 
-int main (void)
+void usage() {
+	printf("usage: humiture <GPIO pin #>\n");
+	exit(1);
+}
+
+int main (int argc, char **argv)
 {
+	int gpioPin;
+
+	if (argc != 2) {
+		usage();
+	}
+
+	errno = 0;
+	gpioPin = strtol(argv[1], NULL, 10);
+	if (errno != 0) {
+		usage();
+	}
+
 	if (wiringPiSetup () == -1) {
 		return (1) ;
 	}
 
-	while (!read_data()) {
+	while (!read_data(gpioPin)) {
 		/* NOOP */
 	}
 
