@@ -5,7 +5,7 @@ set -u # Warn about uninitialized variables
 
 GPIO_PIN=${1:-}
 SENSOR=${2:-}
-TEMPERATURE_UNIT=${2:-}
+TEMPERATURE_UNIT=${3:-}
 
 if [ "${GPIO_PIN}" = "" ] || [ "${SENSOR}" = "" ] || [ "${TEMPERATURE_UNIT}" = "" ] ; then
         echo "usage: $0 <GPIO pin #> <sensor> <temperature unit>" >&2
