@@ -4,9 +4,11 @@ set -e # Exit if any commands fail
 set -u # Warn about uninitialized variables
 
 GPIO_PIN=${1:-}
+SENSOR=${2:-}
+TEMPERATURE_UNIT=${2:-}
 
-if [ "${GPIO_PIN}" = "" ] ; then
-        echo "usage: $0 <GPIO pin #>" >&2
+if [ "${GPIO_PIN}" = "" ] || [ "${SENSOR}" = "" ] || [ "${TEMPERATURE_UNIT}" = "" ] ; then
+        echo "usage: $0 <GPIO pin #> <sensor> <temperature unit>" >&2
 	echo "Note: This is the GPIO pin number used by wiringPi"
         exit 1
 fi
@@ -32,7 +34,7 @@ fi
 
 TMP=$(mktemp)
 BASEDIR=$(dirname "$0")
-"${BASEDIR}"/humiture "${GPIO_PIN}" > "${TMP}"
+"${BASEDIR}"/humiture "${GPIO_PIN}" "${SENSOR}" "${TEMPERATURE_UNIT}" > "${TMP}"
 HUMIDITY=$(grep Humidity "${TMP}" | awk '{print $2}')
 TEMPERATURE=$(grep Temperature "${TMP}" | awk '{print $2}')
 rm -f "${TMP}"

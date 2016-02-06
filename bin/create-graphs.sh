@@ -11,7 +11,7 @@ create_graph()
 	rrdtool graph "${OUTFILE}" \
 		--start "-${SCALE}" \
 		DEF:temp="${RRDFILE}":temp:MIN \
-		AREA:temp#FFFF00:"Temperature (*F)" \
+		AREA:temp#FFFF00:"Temperature" \
 		DEF:humidity="${RRDFILE}":humidity:MAX \
 		LINE1:humidity#0000FF:"Relative Humidity (%)"
 }

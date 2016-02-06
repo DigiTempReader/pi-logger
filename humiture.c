@@ -13,10 +13,43 @@
 
 #define MAXTIMINGS 85
 
-int data[5];
+struct temperature_humidity {
+	float temperature;
+	float humidity;
+};
 
-int read_data(int gpioPin)
+float celsius_to_fahrenheit(float input) {
+	return input * 9.0 / 5.0 + 32;
+}
+
+float celsius_to_celsius(float input) {
+	return input;
+}
+
+float celsius_to_kelvin(float input) {
+	return input + 273.15;
+}
+
+void dht11_parse_data(int data[5], struct temperature_humidity *result)
 {
+	result->humidity = ((data[0] << 8) | data[1]) / 256;
+	result->temperature = ((data[2] << 8) | data[3]) / 256;
+}
+
+void dht22_parse_data(int data[5], struct temperature_humidity *result)
+{
+	result->humidity = (data[0] * 256 + data[1]) / 10;
+
+	result->temperature = ((data[2] & 0x7F) * 256 + data[3]) / 10;
+	if (data[2] & 0x80) {
+		result->temperature *= -1;
+	}
+}
+
+int read_data(int gpioPin, void (*parser)(int data[5], struct temperature_humidity *result),
+		float (*temperature_converter)(float input), char temperature_unit)
+{
+	int data[5];
 	uint8_t laststate = HIGH;
 	uint8_t counter = 0;
 	uint8_t j = 0, i;
@@ -66,21 +99,19 @@ int read_data(int gpioPin)
 	   print it out if data is good */
 	if ((j >= 40) && 
 			(data[4] == ((data[0] + data[1] + data[2] + data[3]) & 0xFF)) ) {
-		float temperature, humidity;
-		humidity = (data[0] * 256 + data[1]) / 10;
+		struct temperature_humidity result;
 
-		temperature = ((data[2] & 0x7F)* 256 + data[3]) / 10;
-		if (data[2] & 0x80) {
-			temperature *= -1;
-		}
-
-		if (humidity < 0.0 || humidity > 100.0 || temperature < -30.0 || temperature > 50.0) {
+		parser(data, &result);
+		if (result.humidity < 0.0 || result.humidity > 100.0 ||
+			result.temperature < -70.0 || result.temperature > 70.0) {
 			/* Bad reading */
 			return 0;
 		}
 
-		printf("Humidity: %.1f %%\nTemperature: %.1f *F\n", 
-				humidity, temperature * 9.0 / 5.0 + 32);
+		printf("Humidity: %.1f %%\nTemperature: %.1f *%c\n", 
+				result.humidity,
+				temperature_converter(result.temperature),
+				temperature_unit);
 		return 1;
 	}
 
@@ -89,7 +120,9 @@ int read_data(int gpioPin)
 }
 
 void usage() {
-	printf("usage: humiture <GPIO pin #>\n");
+	printf("usage: humiture <GPIO pin #> <sensor> <temperature>\n");
+	printf("\t- valid sensor values: dht22\n");
+	printf("\t- valid temperature values: celsius, fahrenheit, kelvin\n");
 	exit(1);
 }
 
@@ -97,7 +130,7 @@ int main (int argc, char **argv)
 {
 	int gpioPin;
 
-	if (argc != 2) {
+	if (argc != 4) {
 		usage();
 	}
 
@@ -107,11 +140,42 @@ int main (int argc, char **argv)
 		usage();
 	}
 
+	void (*parser)(int data[5], struct temperature_humidity *result);
+	if (strcmp(argv[2], "dht11") == 0) {
+		parser = &dht11_parse_data;
+	}
+	else if (strcmp(argv[2], "dht22") == 0) {
+		parser = &dht22_parse_data;
+	}
+	else {
+		usage();
+	}
+
+	char temperature_unit;
+	float (*temperature_converter)(float input);
+	if (strcmp(argv[3], "celsius") == 0) {
+		temperature_converter = &celsius_to_celsius;
+		temperature_unit = 'C';
+	}
+	else if (strcmp(argv[3], "fahrenheit") == 0) {
+		temperature_converter = &celsius_to_fahrenheit;
+		temperature_unit = 'F';
+	}
+	else if (strcmp(argv[3], "kelvin") == 0) {
+		temperature_converter = &celsius_to_kelvin;
+		temperature_unit = 'K';
+	}
+	else {
+		usage();
+	}
+
+
 	if (wiringPiSetup () == -1) {
 		return (1) ;
 	}
 
-	while (!read_data(gpioPin)) {
+	while (!read_data(gpioPin, parser, temperature_converter,
+				temperature_unit)) {
 		/* NOOP */
 	}
 
