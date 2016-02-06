@@ -15,3 +15,7 @@ install:
 	systemctl start pi-logger-create-graphs.service
 	systemctl start pi-logger-create-graphs.timer
 	systemctl enable pi-logger-create-graphs.timer
+
+shellcheck:
+	shellcheck bin/create-graphs.sh
+	shellcheck bin/gather-data.sh
