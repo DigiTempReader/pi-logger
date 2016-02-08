@@ -147,7 +147,7 @@ int read_data(int gpioPin, void (*parser)(int data[5],
 void usage(void)
 {
 	printf("usage: humiture <GPIO pin #> <sensor> <temperature>\n");
-	printf("\t- valid sensor values: dht22\n");
+	printf("\t- valid sensor values: dht11, dht22\n");
 	printf("\t- valid temperature values: celsius, fahrenheit, kelvin\n");
 	exit(1);
 }
