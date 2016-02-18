@@ -72,13 +72,11 @@ int read_data(int gpioPin, void (*parser)(int data[5],
 		float (*temperature_converter)(float input),
 		char temperature_unit)
 {
-	int data[5];
+	int data[5] = { 0 };
 	int checksum;
 	uint8_t laststate = HIGH;
 	uint8_t counter = 0;
 	uint8_t j = 0, i;
-
-	memset(data, 0, sizeof(data));
 
 	/* pull pin down for 18 milliseconds */
 	pinMode(gpioPin, OUTPUT);
