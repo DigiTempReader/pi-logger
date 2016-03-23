@@ -2,7 +2,7 @@
 Description=pi-logger data gatherer timer
 
 [Timer]
-OnCalendar=300s
+OnCalendar=*:0/5
 
 [Install]
 WantedBy=multi-user.target
