@@ -12,8 +12,8 @@ over time.
 
 ## Supported temperature and humidity sensors
 
-* DHT11
-* DHT22
+* [DHT11](http://droboticsonline.com/ebaydownloads/DHT11DATASheetDFR0067.pdf)
+* [DHT22](https://www.sparkfun.com/datasheets/Sensors/Temperature/DHT22.pdf)
 
 
 ## Installation
