@@ -10,10 +10,14 @@ create_graph()
 
 	rrdtool graph "${OUTFILE}" \
 		--start "-${SCALE}" \
-		DEF:temp="${RRDFILE}":temp:MIN \
-		AREA:temp#FFFF00:"Temperature" \
-		DEF:humidity="${RRDFILE}":humidity:MAX \
-		LINE1:humidity#0000FF:"Relative Humidity (%)"
+		DEF:tempmax="${RRDFILE}":temp:MAX \
+		DEF:tempmin="${RRDFILE}":temp:MIN \
+		AREA:tempmax#FF0000:"Max Temperature" \
+		AREA:tempmin#FFFF00:"Min Temperature" \
+		DEF:humiditymax="${RRDFILE}":humidity:MAX \
+		DEF:humiditymin="${RRDFILE}":humidity:MIN \
+		LINE1:humiditymax#FF00FF:"Max Relative Humidity (%)" \
+		LINE1:humiditymin#0000FF:"Min Relative Humidity (%)"
 }
 
 create_graph 4h "${GRAPH_DIR}/humiture_hourly.png"
