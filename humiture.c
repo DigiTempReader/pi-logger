@@ -70,7 +70,8 @@ void dht22_parse_data(int data[5], struct temperature_humidity *result)
 int read_data(int gpioPin, void (*parser)(int data[5],
 		struct temperature_humidity *result),
 		float (*temperature_converter)(float input),
-		char temperature_unit)
+		char temperature_unit, int minValidTempC,
+		int maxValidTempC)
 {
 	int data[5] = { 0 };
 	int checksum;
@@ -125,8 +126,8 @@ int read_data(int gpioPin, void (*parser)(int data[5],
 		parser(data, &result);
 		if (result.humidity < 0.0 ||
 			result.humidity > 100.0 ||
-			result.temperature < -70.0 ||
-			result.temperature > 70.0) {
+			result.temperature < minValidTempC ||
+			result.temperature > maxValidTempC) {
 			/* Bad reading */
 			return 0;
 		}
@@ -144,7 +145,7 @@ int read_data(int gpioPin, void (*parser)(int data[5],
 
 void usage(void)
 {
-	printf("usage: humiture <GPIO pin #> <sensor> <temperature>\n");
+	printf("usage: humiture <GPIO pin #> <sensor> <temperature> <min valid temp (C)> <max valid temp (C)\n");
 	printf("\t- valid sensor values: dht11, dht22\n");
 	printf("\t- valid temperature values: celsius, fahrenheit, kelvin\n");
 	exit(1);
@@ -155,9 +156,9 @@ int main(int argc, char **argv)
 	void (*parser)(int data[5], struct temperature_humidity *result);
 	float (*temperature_converter)(float input);
 	char temperature_unit;
-	int gpioPin;
+	int gpioPin, minValidTempC, maxValidTempC;
 
-	if (argc != 4)
+	if (argc != 6)
 		usage();
 
 	errno = 0;
@@ -184,12 +185,21 @@ int main(int argc, char **argv)
 	} else
 		usage();
 
+	errno = 0;
+	minValidTempC = strtol(argv[4], NULL, 10);
+	if (errno != 0)
+		usage();
+
+	maxValidTempC = strtol(argv[5], NULL, 10);
+	if (errno != 0)
+		usage();
 
 	if (wiringPiSetup() == -1)
 		return 1;
 
 	while (!read_data(gpioPin, parser, temperature_converter,
-				temperature_unit)) {
+				temperature_unit, minValidTempC,
+				maxValidTempC)) {
 		/* NOOP */
 	}
 
