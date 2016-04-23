@@ -1,26 +1,42 @@
 <html>
 <head>
-  <meta http-equiv="cache-control" content="no-cache">
-  <meta http-equiv="refresh" content="3600" >
+  <meta http-equiv="cache-control" content="no-cache"/>
+  <meta http-equiv="refresh" content="3600"/>
   <title>Temperature and Humidity</title>
+  <style>
+    h2 { text-align: center; }
+    .title { width: 481px; text-align: center; font-weight: bold; font-size: 110%; padding: 5px; }
+    .graph { width: 48xpx; float: left; padding: 10px; }
+  </style>
 </head>
-<body>
-    <h2>Temperature and Humidity</h2>
-     
-    <h3>Hourly</h3>
-    <img src="humiture_hourly.png"/>
 
-    <h3>Daily</h3>
-    <img src="humiture_daily.png"/>
+<body>
+  <h2>Temperature and Humidity</h2>
+  <div>
+    <div class="graph">
+      <div class="title">Hourly</div>
+      <img src="humiture_hourly.png"/>
+    </div>
+
+    <div class="graph">
+      <div class="title">Daily</div>
+      <img src="humiture_daily.png"/>
+    </div>
      
-    <h3>Weekly</h3>
-    <img src="humiture_weekly.png"/>
+    <div class="graph">
+      <div class="title">Weekly</div>
+      <img src="humiture_weekly.png"/>
+    </div>
      
-    <h3>Monthly</h3>
-    <img src="humiture_monthly.png"/>
+    <div class="graph">
+      <div class="title">Monthly</div>
+      <img src="humiture_monthly.png"/>
+    </div>
      
-    <h3>Yearly</h3>
-    <img src="humiture_yearly.png"/>
+    <div class="graph">
+      <div class="title">Yearly</div>
+      <img src="humiture_yearly.png"/>
+    </div>
   </div>
 </body>
 </html>
