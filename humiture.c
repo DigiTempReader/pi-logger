@@ -70,8 +70,8 @@ void dht22_parse_data(int data[5], struct temperature_humidity *result)
 int read_data(int gpioPin, void (*parser)(int data[5],
 		struct temperature_humidity *result),
 		float (*temperature_converter)(float input),
-		char temperature_unit, int minValidTempC,
-		int maxValidTempC)
+		char temperature_unit, int minValidTemp,
+		int maxValidTemp)
 {
 	int data[5] = { 0 };
 	int checksum;
@@ -122,19 +122,22 @@ int read_data(int gpioPin, void (*parser)(int data[5],
 	checksum = (data[0] + data[1] + data[2] + data[3]) & 0xFF;
 	if (j >= 40 && data[4] == checksum) {
 		struct temperature_humidity result;
+		float conv_temp;
 
 		parser(data, &result);
+		conv_temp = temperature_converter(result.temperature);
+
 		if (result.humidity < 0.0 ||
 			result.humidity > 100.0 ||
-			result.temperature < minValidTempC ||
-			result.temperature > maxValidTempC) {
+			conv_temp < minValidTemp ||
+			conv_temp > maxValidTemp) {
 			/* Bad reading */
 			return 0;
 		}
 
 		printf("Humidity: %.1f %%\nTemperature: %.1f *%c\n",
 				result.humidity,
-				temperature_converter(result.temperature),
+				conv_temp,
 				temperature_unit);
 		return 1;
 	}
@@ -156,7 +159,7 @@ int main(int argc, char **argv)
 	void (*parser)(int data[5], struct temperature_humidity *result);
 	float (*temperature_converter)(float input);
 	char temperature_unit;
-	int gpioPin, minValidTempC, maxValidTempC;
+	int gpioPin, minValidTemp, maxValidTemp;
 
 	if (argc != 6)
 		usage();
@@ -186,11 +189,11 @@ int main(int argc, char **argv)
 		usage();
 
 	errno = 0;
-	minValidTempC = strtol(argv[4], NULL, 10);
+	minValidTemp = strtol(argv[4], NULL, 10);
 	if (errno != 0)
 		usage();
 
-	maxValidTempC = strtol(argv[5], NULL, 10);
+	maxValidTemp = strtol(argv[5], NULL, 10);
 	if (errno != 0)
 		usage();
 
@@ -198,8 +201,8 @@ int main(int argc, char **argv)
 		return 1;
 
 	while (!read_data(gpioPin, parser, temperature_converter,
-				temperature_unit, minValidTempC,
-				maxValidTempC)) {
+				temperature_unit, minValidTemp,
+				maxValidTemp)) {
 		/* NOOP */
 	}
 
